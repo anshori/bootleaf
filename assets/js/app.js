@@ -419,25 +419,36 @@ if (document.body.clientWidth <= 767) {
   var isCollapsed = false;
 }
 
-var baseLayers = {
-  "Street Map": cartoLight,
-  "Aerial Imagery": usgsImagery
+/* Control Layer Tree */
+var basemapTree = {
+    label: '<b>Basemaps</b>',
+    children: [
+        {label: 'Street Map', layer: cartoLight},
+        {label: 'Aerial Imagery', layer: usgsImagery}
+    ]
 };
 
-var groupedOverlays = {
-  "Points of Interest": {
-    "<img src='assets/img/theater.png' width='24' height='28'>&nbsp;Theaters": theaterLayer,
-    "<img src='assets/img/museum.png' width='24' height='28'>&nbsp;Museums": museumLayer
-  },
-  "Reference": {
-    "Boroughs": boroughs,
-    "Subway Lines": subwayLines
-  }
-};
+var layersTree = {
+  label: '<b>Layer</b>',
+  noShow: true,
+  children: [
+    {label: '<b>Points of Interest</b>', children: [
+      {label: '<img src="assets/img/theater.png" width="24" height="28">&nbsp;Theaters', layer: theaterLayer},
+	  {label: '<img src="assets/img/museum.png" width="24" height="28">&nbsp;Museums', layer: museumLayer}
+    ]},
+    {label: '<b>Reference</b>', children: [
+      {label: 'Boroughs', layer: boroughs},
+      {label: 'Subway Lines', layer: subwayLines}
+    ]},
+  ]
+}
 
-var layerControl = L.control.groupedLayers(baseLayers, groupedOverlays, {
-  collapsed: isCollapsed
-}).addTo(map);
+var layercontroltree = L.control.layers.tree(basemapTree, layersTree, {
+  namedToggle: false,
+  selectorBack: false,
+  collapsed: isCollapsed,
+});
+layercontroltree.addTo(map).collapseTree(false).expandSelected(true);
 
 /* Highlight search box text on click */
 $("#searchbox").click(function () {
